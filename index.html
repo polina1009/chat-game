@@ -84,6 +84,7 @@
                 <input type="text" name="message" class="form-control" placeholder="input message">
                 <button type="submit" class="btn btn-primary">Отправить</button>
                 <button type="button" class="btn btn-ft">Предложить игру</button>
+                <button type="button" id="out">out of game (test)</button>
             </form>
             <ul class="messages">
 
@@ -93,35 +94,35 @@
             <div class="cont-game">
                 <div class="playing-cards-first-player" id="player-cards">
                     <!--<div class="card" id="card-1">-->
-                        <!--&lt;!&ndash;это захардкоженый вариант. потом контент будет генерится через js&ndash;&gt;-->
-                        <!--<div class="card-content">-->
-                            <!--<b>offence = </b>100 <br />-->
-                            <!--<b>defence = </b>200-->
-                        <!--</div>-->
+                    <!--&lt;!&ndash;это захардкоженый вариант. потом контент будет генерится через js&ndash;&gt;-->
+                    <!--<div class="card-content">-->
+                    <!--<b>offence = </b>100 <br />-->
+                    <!--<b>defence = </b>200-->
+                    <!--</div>-->
                     <!--</div>-->
                     <!--<div class="card" id="card-2">-->
-                        <!--<div class="card-content">-->
-                            <!--<b>offence = </b>100 <br />-->
-                            <!--<b>defence = </b>200-->
-                        <!--</div>-->
+                    <!--<div class="card-content">-->
+                    <!--<b>offence = </b>100 <br />-->
+                    <!--<b>defence = </b>200-->
+                    <!--</div>-->
                     <!--</div>-->
                     <!--<div class="card" id="card-3">-->
-                        <!--<div class="card-content">-->
-                            <!--<b>offence = </b>100 <br />-->
-                            <!--<b>defence = </b>200-->
-                        <!--</div>-->
+                    <!--<div class="card-content">-->
+                    <!--<b>offence = </b>100 <br />-->
+                    <!--<b>defence = </b>200-->
+                    <!--</div>-->
                     <!--</div>-->
                     <!--<div class="card" id="card-4">-->
-                        <!--<div class="card-content">-->
-                            <!--<b>offence = </b>100 <br />-->
-                            <!--<b>defence = </b>200-->
-                        <!--</div>-->
+                    <!--<div class="card-content">-->
+                    <!--<b>offence = </b>100 <br />-->
+                    <!--<b>defence = </b>200-->
+                    <!--</div>-->
                     <!--</div>-->
                     <!--<div class="card" id="card-5">-->
-                        <!--<div class="card-content">-->
-                            <!--<b>offence = </b>100 <br />-->
-                            <!--<b>defence = </b>200-->
-                        <!--</div>-->
+                    <!--<div class="card-content">-->
+                    <!--<b>offence = </b>100 <br />-->
+                    <!--<b>defence = </b>200-->
+                    <!--</div>-->
                     <!--</div>-->
                 </div>
                 <div class="playing-cards-second-player">
@@ -149,9 +150,9 @@
         ':)'  :  'http://www.kolobok.us/smiles/big_standart/biggrin.gif',
         ':*'  :  'http://www.kolobok.us/smiles/he_and_she/kiss2.gif'
     }
-    var url = 'http://chat.apples.fe.a-level.com.ua:8070';
+    var url = 'http://localhost:8070';
     // var url      = "http://students.a-level.com.ua:10012";
-    var ipUrl    = "https://api.ipify.org?format=json";
+
     var messages = [];
 
     function jsonPost(url, data, method)
@@ -200,15 +201,15 @@
         jsonPost(url, {'func' :'getMessages', 'messageId': messages.length}, "POST")
             .then((res) => {
                 res.data.forEach(item => {
-                    addMessage(item, document.getElementsByClassName('messages')[0])
+                    addMessage(item, document.getElementsByClassName('messages')[0]);
                     messages.push(item);
                 })
 
             })
-    }, 1000)
+    }, 5000)
 
     function allowFight() {
-        if (!localStorage['state']) {
+        if (playerInGame() != 'true') {
             var data = {};
             data.pk      = generateUUID();
             data.func    = 'addMessage';
@@ -218,23 +219,27 @@
                     Принять бой от ${this.parentNode.nick.value}</button>`;
             jsonPost(url, data).
             then((data) => {
-                startGame(document.getElementsByClassName('game_field')[0])
-                alert('Ваш вызов принял ' + data.opponent )})
-            .then(init)
+                startGame(document.getElementsByClassName('game_field')[0]);
+                alert('Ваш вызов принял ' + data.opponent );
+                return data.oppKey})
+                .then(doMove)
+                .then(() => playerInGame(true))
+                .then(init)
+
 
         }
     }
 
-    document.getElementById('publish').addEventListener('submit', sendMessage)
+    document.getElementById('publish').addEventListener('submit', sendMessage);
 
-    document.getElementsByClassName('btn-ft')[0].addEventListener('click', allowFight)
+    document.getElementsByClassName('btn-ft')[0].addEventListener('click', allowFight);
 
     document.body.onclick = function(ev) {
         var target = ev.target;
         if (target.classList.contains('sbm_ft') /*&& target.dataset.pk != generateUUID()*/) {
 
             /* После снятия комментария в блоке if пропадет возможность принимать вызовы у самого себя в одном окне браузера*/
-
+            playerInGame(true);
             var data = {};
             data.pk           = generateUUID();
             data.anotherPk    = target.dataset.pk;
@@ -244,12 +249,14 @@
                 .then((data) => {
                     if (data.status == 'bed') {
                         console.log('##### Ваш соперник уже принимает участие в игре');
-
+                    }
+                    else {
+                        alert('Готовьтесь к игре');
+                        startGame(document.getElementsByClassName('game_field')[0]);
+                        doMove(data.oppKey);
+                        init();
 
                     }
-                    else
-                        alert('Готовьтесь к игре');
-                    startGame(document.getElementsByClassName('game_field')[0])
                 })
         }
     };
@@ -319,7 +326,34 @@
 
 
 
+    function doMove(oppKey) {
 
+        /*    Тут создаем обьект data со всеми нужными полями для игры*/
+
+        var data = {};
+        data.pk     = generateUUID();
+        data.oppKey = oppKey;
+        data.action = 'startFight';
+        jsonPost(url, data)
+            .then(res => {
+
+                /*   Тут принимаем обьект ответа и обрабатываем его. Открываем доступ к полям для управления и тд
+                   doMove требуется навесить еще на какой то обработчик собития  */
+
+
+
+            .catch(() => {
+                    alert('unknown error')
+                });
+            })
+    }
+
+    function playerInGame(isTrue) {
+        if (!arguments.length) {
+            return localStorage['inGame'];
+        }
+        localStorage['inGame'] = isTrue.toString()
+    }
 
     function generateUUID () {
         var uuid = null;
@@ -343,6 +377,14 @@
 
     String.prototype.replaceAll = function(str1, str2, ignore) {
         return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+    }
+
+
+
+    ////////////////////////// testing //////////////////////////////
+
+    document.getElementById('out').onclick = function () {
+        localStorage['inGame'] = 'false';
     }
 
 </script>
