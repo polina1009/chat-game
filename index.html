@@ -52,6 +52,20 @@
             background: darkblue;
         }
 
+        .rotate {
+            transition-duration: 1s;
+            /*transition: 1000s linear;*/
+            transform: rotateY(180deg);
+            border: 1px solid black;
+            width: 18%;
+            border-radius: 5px;
+        }
+
+        .card-content {
+            visibility: hidden;
+            transform: rotateY(180deg);
+        }
+
         .playing-cards-second-player .card {
             background: black;
         }
@@ -77,12 +91,38 @@
         </div>
         <div class="col-md-4 game_field invisible">
             <div class="cont-game">
-                <div class="playing-cards-first-player">
-                    <div class="card"></div>
-                    <div class="card"></div>
-                    <div class="card"></div>
-                    <div class="card"></div>
-                    <div class="card"></div>
+                <div class="playing-cards-first-player" id="player-cards">
+                    <div class="card" id="card-1">
+                        <!--это захардкоженый вариант. потом контент будет генерится через js-->
+                        <div class="card-content">
+                            <b>offence = </b>100 <br />
+                            <b>defence = </b>200
+                        </div>
+                    </div>
+                    <div class="card" id="card-2">
+                        <div class="card-content">
+                            <b>offence = </b>100 <br />
+                            <b>defence = </b>200
+                        </div>
+                    </div>
+                    <div class="card" id="card-3">
+                        <div class="card-content">
+                            <b>offence = </b>100 <br />
+                            <b>defence = </b>200
+                        </div>
+                    </div>
+                    <div class="card" id="card-4">
+                        <div class="card-content">
+                            <b>offence = </b>100 <br />
+                            <b>defence = </b>200
+                        </div>
+                    </div>
+                    <div class="card" id="card-5">
+                        <div class="card-content">
+                            <b>offence = </b>100 <br />
+                            <b>defence = </b>200
+                        </div>
+                    </div>
                 </div>
                 <div class="playing-cards-second-player">
                     <div class="card"></div>
@@ -202,14 +242,50 @@
             jsonPost(url, data)
                 .then((data) => {
                     if (data.status == 'bed') {
-                        alert('Ваш соперник уже принимает участие в игре');
+                        console.log('##### Ваш соперник уже принимает участие в игре');
+
+                        init();
                     }
                     else
                         alert('Готовьтесь к игре');
                     startGame(document.getElementsByClassName('game_field')[0])
                 })
         }
+    };
+
+
+
+
+
+
+
+    function doRotate(element) {
+        element.classList.add('rotate');
+        setTimeout(() => {
+            element.children[0].style.visibility = "visible"
+        }, 500);
     }
+
+    function init() {
+        var cards = document.getElementById('player-cards').children;
+        console.log(cards);
+        var delay = 200;
+
+        Array.prototype.forEach.call(cards, function(el) {
+            setTimeout(function() {
+                doRotate(el);
+            }, delay);
+            delay += 200;
+        });
+    }
+
+
+
+
+
+
+
+
 
 
 
