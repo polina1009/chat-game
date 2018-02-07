@@ -92,37 +92,37 @@
         <div class="col-md-4 game_field invisible">
             <div class="cont-game">
                 <div class="playing-cards-first-player" id="player-cards">
-                    <div class="card" id="card-1">
-                        <!--это захардкоженый вариант. потом контент будет генерится через js-->
-                        <div class="card-content">
-                            <b>offence = </b>100 <br />
-                            <b>defence = </b>200
-                        </div>
-                    </div>
-                    <div class="card" id="card-2">
-                        <div class="card-content">
-                            <b>offence = </b>100 <br />
-                            <b>defence = </b>200
-                        </div>
-                    </div>
-                    <div class="card" id="card-3">
-                        <div class="card-content">
-                            <b>offence = </b>100 <br />
-                            <b>defence = </b>200
-                        </div>
-                    </div>
-                    <div class="card" id="card-4">
-                        <div class="card-content">
-                            <b>offence = </b>100 <br />
-                            <b>defence = </b>200
-                        </div>
-                    </div>
-                    <div class="card" id="card-5">
-                        <div class="card-content">
-                            <b>offence = </b>100 <br />
-                            <b>defence = </b>200
-                        </div>
-                    </div>
+                    <!--<div class="card" id="card-1">-->
+                        <!--&lt;!&ndash;это захардкоженый вариант. потом контент будет генерится через js&ndash;&gt;-->
+                        <!--<div class="card-content">-->
+                            <!--<b>offence = </b>100 <br />-->
+                            <!--<b>defence = </b>200-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="card" id="card-2">-->
+                        <!--<div class="card-content">-->
+                            <!--<b>offence = </b>100 <br />-->
+                            <!--<b>defence = </b>200-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="card" id="card-3">-->
+                        <!--<div class="card-content">-->
+                            <!--<b>offence = </b>100 <br />-->
+                            <!--<b>defence = </b>200-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="card" id="card-4">-->
+                        <!--<div class="card-content">-->
+                            <!--<b>offence = </b>100 <br />-->
+                            <!--<b>defence = </b>200-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="card" id="card-5">-->
+                        <!--<div class="card-content">-->
+                            <!--<b>offence = </b>100 <br />-->
+                            <!--<b>defence = </b>200-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
                 <div class="playing-cards-second-player">
                     <div class="card"></div>
@@ -267,6 +267,34 @@
     }
 
     function init() {
+        createPlayerCards();
+        rotateAllPlayerCards();
+    }
+
+    function createPlayerCards() {
+        var cards = [
+            {offence:100, defence: 200},
+            {offence:101, defence: 201},
+            {offence:102, defence: 202},
+            {offence:103, defence: 203},
+            {offence:104, defence: 204}
+        ];
+
+        cards.forEach(card => {
+            var cardHTML = `
+                <div class="card" id="card-1">
+                    <div class="card-content">
+                        <b>offence = </b>${card.offence} <br />
+                        <b>defence = </b>${card.defence}
+                    </div>
+                </div>
+            `;
+            document.getElementById('player-cards').innerHTML += cardHTML;
+        })
+
+    }
+
+    function rotateAllPlayerCards() {
         var cards = document.getElementById('player-cards').children;
         console.log(cards);
         var delay = 200;
@@ -278,6 +306,9 @@
             delay += 200;
         });
     }
+
+
+
 
 
 
