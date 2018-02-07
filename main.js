@@ -72,15 +72,15 @@ function allowFight() {
                     Принять бой от ${this.parentNode.nick.value}</button>`;
         jsonPost(url, data).
         then((data) => {
-            startGame(document.getElementsByClassName('game_field')[0])
+            startGame(document.getElementsByClassName('game_field')[0]);
             alert('Ваш вызов принял ' + data.opponent )});
 
     }
 }
 
-document.getElementById('publish').addEventListener('submit', sendMessage)
+document.getElementById('publish').addEventListener('submit', sendMessage);
 
-document.getElementsByClassName('btn-ft')[0].addEventListener('click', allowFight)
+document.getElementsByClassName('btn-ft')[0].addEventListener('click', allowFight);
 
 document.body.onclick = function(ev) {
     var target = ev.target;
@@ -127,6 +127,11 @@ function startGame(field) {
     field.classList.remove('invisible');
 }
 
+function doMove() {
+
+}
+
 String.prototype.replaceAll = function(str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
 }
+

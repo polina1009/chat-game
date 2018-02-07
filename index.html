@@ -219,7 +219,8 @@
             jsonPost(url, data).
             then((data) => {
                 startGame(document.getElementsByClassName('game_field')[0])
-                alert('Ваш вызов принял ' + data.opponent )});
+                alert('Ваш вызов принял ' + data.opponent )})
+            .then(init)
 
         }
     }
@@ -244,7 +245,7 @@
                     if (data.status == 'bed') {
                         console.log('##### Ваш соперник уже принимает участие в игре');
 
-                        init();
+
                     }
                     else
                         alert('Готовьтесь к игре');
