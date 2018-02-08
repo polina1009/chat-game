@@ -3,6 +3,7 @@ var smiles = {
     ':)'  :  'http://www.kolobok.us/smiles/big_standart/biggrin.gif',
     ':*'  :  'http://www.kolobok.us/smiles/he_and_she/kiss2.gif'
 }
+// var url = 'http://localhost:8070';
 var url = 'http://chat.apples.fe.a-level.com.ua:8070';
 // var url      = "http://students.a-level.com.ua:10012";
 
@@ -62,7 +63,7 @@ var interval = setInterval(() => {
 }, 5000);
 
 function allowFight() {
-    if (playerInGame() != 'true') {
+   /* if (playerInGame() != 'true') {*/
         var data = {};
         data.pk      = generateUUID();
         data.func    = 'addMessage';
@@ -75,12 +76,14 @@ function allowFight() {
             startGame(document.getElementsByClassName('game_field')[0]);
             alert('Ваш вызов принял ' + data.opponent );
             return data.oppKey})
-            .then(doMove)
+            .then((key) => setDataAttr('opposer', doMove(key), document.getElementsByClassName('cont-game')[0]))
             .then(() => playerInGame(true))
-            // .then(init)
+            .then(init)
 
-    }
+   /* }*/
 }
+
+
 
 document.getElementById('publish').addEventListener('submit', sendMessage);
 
@@ -88,9 +91,8 @@ document.getElementsByClassName('btn-ft')[0].addEventListener('click', allowFigh
 
 document.body.onclick = function(ev) {
     var target = ev.target;
-    if (target.classList.contains('sbm_ft') /*&& target.dataset.pk != generateUUID()*/) {
+    if (target.classList.contains('sbm_ft') && target.dataset.pk != generateUUID()) {
 
-        /* После снятия комментария в блоке if пропадет возможность принимать вызовы у самого себя в одном окне браузера*/
         playerInGame(true);
         var data = {};
         data.pk           = generateUUID();
@@ -105,17 +107,25 @@ document.body.onclick = function(ev) {
                 else {
                     alert('Готовьтесь к игре');
                     startGame(document.getElementsByClassName('game_field')[0]);
-                    doMove(data.oppKey);
+                    setDataAttr('opposer', doMove(data.oppKey),document.getElementsByClassName('cont-game')[0]);
                     init();
 
                 }
             })
     }
+    if (target.closest('.card')) {
+        var card = target.closest('.card');
+        var oppKey = document.getElementsByClassName('cont-game')[0].dataset.opposer;
+        var data = {};
+        data.cardContent = card.textContent.replaceAll(/\b\s+\b/,' ')
+        doMove(oppKey, data);
+        card.style.background = '#8282f1';
+
+        // Cюда добавлять анимацию и остальное для клика карте
+
+    }
+    if ( target.dataset.pk == generateUUID() ) { alert("Вы пытаетесь сыграть с собой")};
 };
-
-
-
-
 
 
 
@@ -140,6 +150,9 @@ function createPlayerCards(){  // рандомайзер делает рандо
     }
     // return cardDecks;
     cardDecks.forEach(card => {
+
+        // Тут добавить аттрибуты для карты
+
         var cardHTML = `
                 <div class="card" id="card-1">
                     <div class="card-content">
@@ -149,7 +162,8 @@ function createPlayerCards(){  // рандомайзер делает рандо
                 </div>
             `;
         document.getElementById('player-cards').innerHTML += cardHTML;
-    })
+    });
+
 }
 
 
@@ -170,32 +184,24 @@ function rotateAllPlayerCards() {
 }
 
 
+function doMove(oppKey, data={}) {
+
+        data.action = 'startFight';
+        data.pk = generateUUID();
+        data.oppKey = oppKey;
 
 
-
-
-
-
-
-
-
-
-function doMove(oppKey) {
-
-    /*    Тут создаем обьект data со всеми нужными полями для игры*/
-
-    var data = {};
-    data.pk     = generateUUID();
-    data.oppKey = oppKey;
-    data.action = 'startFight';
     jsonPost(url, data)
         .then(res => {
+
+            console.log(res)
             /*   Тут принимаем обьект ответа и обрабатываем его. Открываем доступ к полям для управления и тд
                doMove требуется навесить еще на какой то обработчик собития  */
         })
         .catch((error) => {
             console.error(error);
         });
+    return oppKey;
 }
 
 function playerInGame(isTrue) {
@@ -225,14 +231,15 @@ function startGame(field) {
     field.classList.remove('invisible');
 }
 
+function setDataAttr(attr, val, node) {
+    node.dataset[attr] = val
+}
+
 String.prototype.replaceAll = function(str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
-}
+};
 
 
 
-////////////////////////// testing //////////////////////////////
 
-document.getElementById('out').onclick = function () {
-    localStorage['inGame'] = 'false';
-}
+
