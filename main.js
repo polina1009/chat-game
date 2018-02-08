@@ -77,8 +77,7 @@ function allowFight() {
             return data.oppKey})
             .then(doMove)
             .then(() => playerInGame(true))
-            .then(init)
-
+            // .then(init)
 
     }
 }
@@ -132,32 +131,34 @@ function init() {
     rotateAllPlayerCards();
 }
 
-function createPlayerCards() {
-    var cards = [
-        {offence:100, defence: 200},
-        {offence:101, defence: 201},
-        {offence:102, defence: 202},
-        {offence:103, defence: 203},
-        {offence:104, defence: 204}
-    ];
 
-    cards.forEach(card => {
+function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50
+    var cardDecks = [];
+    for(var i=0; i<5; i++){
+        var rand = {damage: parseInt(Math.random()*50), armor: parseInt(Math.random()*50)};
+        cardDecks.push(rand);
+    }
+    // return cardDecks;
+    cardDecks.forEach(card => {
         var cardHTML = `
                 <div class="card" id="card-1">
                     <div class="card-content">
-                        <b>offence = </b>${card.offence} <br />
-                        <b>defence = </b>${card.defence}
+                        <b>damage = </b>${card.damage} <br />
+                        <b>armor = </b>${card.armor}
                     </div>
                 </div>
             `;
         document.getElementById('player-cards').innerHTML += cardHTML;
     })
-
 }
+
+
+
+
+
 
 function rotateAllPlayerCards() {
     var cards = document.getElementById('player-cards').children;
-    console.log(cards);
     var delay = 200;
 
     Array.prototype.forEach.call(cards, function(el) {
