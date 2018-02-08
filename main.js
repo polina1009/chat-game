@@ -3,7 +3,7 @@ var smiles = {
     ':)'  :  'http://www.kolobok.us/smiles/big_standart/biggrin.gif',
     ':*'  :  'http://www.kolobok.us/smiles/he_and_she/kiss2.gif'
 }
-var url = 'http://localhost:8070';
+var url = 'http://chat.apples.fe.a-level.com.ua:8070';
 // var url      = "http://students.a-level.com.ua:10012";
 
 var messages = [];
