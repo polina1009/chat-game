@@ -59,7 +59,7 @@ var interval = setInterval(() => {
             })
 
         })
-}, 5000)
+}, 5000);
 
 function allowFight() {
     if (playerInGame() != 'true') {
@@ -189,16 +189,12 @@ function doMove(oppKey) {
     data.action = 'startFight';
     jsonPost(url, data)
         .then(res => {
-
             /*   Тут принимаем обьект ответа и обрабатываем его. Открываем доступ к полям для управления и тд
                doMove требуется навесить еще на какой то обработчик собития  */
-
-
-
-        .catch(() => {
-                alert('unknown error')
-            });
         })
+        .catch((error) => {
+            console.error(error);
+        });
 }
 
 function playerInGame(isTrue) {
