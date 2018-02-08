@@ -12,4 +12,7 @@ function randomaizer(){  // рандомайзер делает рандомны
 
 console.log(randomaizer());
 
-console.log(cardDecks)
+console.log(cardDecks);
+
+
+//////////////////////fight////////////////////////////
