@@ -117,11 +117,10 @@ document.body.onclick = function(ev) {
         var card = target.closest('.card');
         var oppKey = document.getElementsByClassName('cont-game')[0].dataset.opposer;
         var data = {};
-        data.cardContent = card.textContent.replaceAll(/\b\s+\b/,' ')
+        data.cardContent = card.textContent.replace(/\b\s+\b/g,' ');
         doMove(oppKey, data);
-        card.style.background = '#8282f1';
-
-        // Cюда добавлять анимацию и остальное для клика карте
+        card.style.background = '#8282f1';   // Это я так для примера. Для выбранных карт надо создать отдельный класс
+        //  который бы их дисейблил
 
     }
     if ( target.dataset.pk == generateUUID() ) { alert("Вы пытаетесь сыграть с собой")};
