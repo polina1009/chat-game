@@ -3,9 +3,9 @@ var smiles = {
     ':)'  :  'http://www.kolobok.us/smiles/big_standart/biggrin.gif',
     ':*'  :  'http://www.kolobok.us/smiles/he_and_she/kiss2.gif'
 }
-var url = 'http://chat.apples.fe.a-level.com.ua:8070';
+var url = 'http://localhost:8070';
 // var url      = "http://students.a-level.com.ua:10012";
-var ipUrl    = "https://api.ipify.org?format=json";
+
 var messages = [];
 
 function jsonPost(url, data, method)
@@ -54,15 +54,15 @@ var interval = setInterval(() => {
     jsonPost(url, {'func' :'getMessages', 'messageId': messages.length}, "POST")
         .then((res) => {
             res.data.forEach(item => {
-                addMessage(item, document.getElementsByClassName('messages')[0])
+                addMessage(item, document.getElementsByClassName('messages')[0]);
                 messages.push(item);
             })
 
         })
-}, 1000)
+}, 5000)
 
 function allowFight() {
-    if (!localStorage['state']) {
+    if (playerInGame() != 'true') {
         var data = {};
         data.pk      = generateUUID();
         data.func    = 'addMessage';
@@ -73,7 +73,12 @@ function allowFight() {
         jsonPost(url, data).
         then((data) => {
             startGame(document.getElementsByClassName('game_field')[0]);
-            alert('Ваш вызов принял ' + data.opponent )});
+            alert('Ваш вызов принял ' + data.opponent );
+            return data.oppKey})
+            .then(doMove)
+            .then(() => playerInGame(true))
+            .then(init)
+
 
     }
 }
@@ -87,7 +92,7 @@ document.body.onclick = function(ev) {
     if (target.classList.contains('sbm_ft') /*&& target.dataset.pk != generateUUID()*/) {
 
         /* После снятия комментария в блоке if пропадет возможность принимать вызовы у самого себя в одном окне браузера*/
-
+        playerInGame(true);
         var data = {};
         data.pk           = generateUUID();
         data.anotherPk    = target.dataset.pk;
@@ -96,16 +101,112 @@ document.body.onclick = function(ev) {
         jsonPost(url, data)
             .then((data) => {
                 if (data.status == 'bed') {
-                    alert('Ваш соперник уже принимает участие в игре');
+                    console.log('##### Ваш соперник уже принимает участие в игре');
                 }
-                else
+                else {
                     alert('Готовьтесь к игре');
-                startGame(document.getElementsByClassName('game_field')[0])
+                    startGame(document.getElementsByClassName('game_field')[0]);
+                    doMove(data.oppKey);
+                    init();
+
+                }
             })
     }
+};
+
+
+
+
+
+
+
+function doRotate(element) {
+    element.classList.add('rotate');
+    setTimeout(() => {
+        element.children[0].style.visibility = "visible"
+    }, 500);
+}
+
+function init() {
+    createPlayerCards();
+    rotateAllPlayerCards();
+}
+
+function createPlayerCards() {
+    var cards = [
+        {offence:100, defence: 200},
+        {offence:101, defence: 201},
+        {offence:102, defence: 202},
+        {offence:103, defence: 203},
+        {offence:104, defence: 204}
+    ];
+
+    cards.forEach(card => {
+        var cardHTML = `
+                <div class="card" id="card-1">
+                    <div class="card-content">
+                        <b>offence = </b>${card.offence} <br />
+                        <b>defence = </b>${card.defence}
+                    </div>
+                </div>
+            `;
+        document.getElementById('player-cards').innerHTML += cardHTML;
+    })
+
+}
+
+function rotateAllPlayerCards() {
+    var cards = document.getElementById('player-cards').children;
+    console.log(cards);
+    var delay = 200;
+
+    Array.prototype.forEach.call(cards, function(el) {
+        setTimeout(function() {
+            doRotate(el);
+        }, delay);
+        delay += 200;
+    });
 }
 
 
+
+
+
+
+
+
+
+
+
+
+function doMove(oppKey) {
+
+    /*    Тут создаем обьект data со всеми нужными полями для игры*/
+
+    var data = {};
+    data.pk     = generateUUID();
+    data.oppKey = oppKey;
+    data.action = 'startFight';
+    jsonPost(url, data)
+        .then(res => {
+
+            /*   Тут принимаем обьект ответа и обрабатываем его. Открываем доступ к полям для управления и тд
+               doMove требуется навесить еще на какой то обработчик собития  */
+
+
+
+        .catch(() => {
+                alert('unknown error')
+            });
+        })
+}
+
+function playerInGame(isTrue) {
+    if (!arguments.length) {
+        return localStorage['inGame'];
+    }
+    localStorage['inGame'] = isTrue.toString()
+}
 
 function generateUUID () {
     var uuid = null;
@@ -127,11 +228,14 @@ function startGame(field) {
     field.classList.remove('invisible');
 }
 
-function doMove() {
-
-}
-
 String.prototype.replaceAll = function(str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
 }
 
+
+
+////////////////////////// testing //////////////////////////////
+
+document.getElementById('out').onclick = function () {
+    localStorage['inGame'] = 'false';
+}
