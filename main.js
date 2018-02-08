@@ -132,28 +132,51 @@ function init() {
     rotateAllPlayerCards();
 }
 
-function createPlayerCards() {
-    var cards = [
-        {offence:100, defence: 200},
-        {offence:101, defence: 201},
-        {offence:102, defence: 202},
-        {offence:103, defence: 203},
-        {offence:104, defence: 204}
-    ];
-
+function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50
+    var cardDecks = [];
+    for(i=0; i<5; i++){
+        var rand = {damage: parseInt(Math.random()*50), armor: parseInt(Math.random()*50)};
+        cardDecks.push(rand);
+    }
+    // return cardDecks;
     cards.forEach(card => {
         var cardHTML = `
                 <div class="card" id="card-1">
                     <div class="card-content">
-                        <b>offence = </b>${card.offence} <br />
-                        <b>defence = </b>${card.defence}
+                        <b>damage = </b>${card.damage} <br />
+                        <b>armor = </b>${card.armor}
                     </div>
                 </div>
             `;
         document.getElementById('player-cards').innerHTML += cardHTML;
     })
-
 }
+
+
+// console.log(createPlayerCards());
+
+// function createPlayerCards() {
+//     var cards = [
+//         {offence:100, defence: 200},
+//         {offence:101, defence: 201},
+//         {offence:102, defence: 202},
+//         {offence:103, defence: 203},
+//         {offence:104, defence: 204}
+//     ];
+
+//     cards.forEach(card => {
+//         var cardHTML = `
+//                 <div class="card" id="card-1">
+//                     <div class="card-content">
+//                         <b>offence = </b>${card.offence} <br />
+//                         <b>defence = </b>${card.defence}
+//                     </div>
+//                 </div>
+//             `;
+//         document.getElementById('player-cards').innerHTML += cardHTML;
+//     })
+
+// }
 
 function rotateAllPlayerCards() {
     var cards = document.getElementById('player-cards').children;
