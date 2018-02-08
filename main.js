@@ -131,26 +131,28 @@ function init() {
     createPlayerCards();
     rotateAllPlayerCards();
 }
+var cardDecks = []; // масив карт 
 
-function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50
-    var cardDecks = [];
+function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50  
     for(i=0; i<5; i++){
         var rand = {damage: parseInt(Math.random()*50), armor: parseInt(Math.random()*50)};
         cardDecks.push(rand);
     }
-    // return cardDecks;
-    cards.forEach(card => {
-        var cardHTML = `
+    return cardDecks;
+
+    cardDecks.forEach(cardDecks => {   // заполняем карты 
+        var cardDecksHTML = `
                 <div class="card" id="card-1">
                     <div class="card-content">
-                        <b>damage = </b>${card.damage} <br />
-                        <b>armor = </b>${card.armor}
+                        <b>damage = </b>${cardDecks.damage} <br />
+                        <b>armor = </b>${cardDecks.armor}
                     </div>
                 </div>
             `;
         document.getElementById('player-cards').innerHTML += cardHTML;
     })
 }
+
 
 
 // console.log(createPlayerCards());
