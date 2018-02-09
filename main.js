@@ -131,7 +131,11 @@ function init() {
     createPlayerCards();
     rotateAllPlayerCards();
 }
+
+
+
 var cardDecks = []; // масив карт 
+var sumParam = [];  // общий параметр для сражения (damag + armor)
 
 function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50  
     for(i=0; i<5; i++){
@@ -149,36 +153,25 @@ function createPlayerCards(){  // рандомайзер делает рандо
                     </div>
                 </div>
             `;
-        document.getElementById('player-cards').innerHTML += cardHTML;
+
+        document.getElementById('player-cards').innerHTML += cardDecksHTML;
     })
+}
+function fightParam(){                           // создаем общий параметр для сражения 
+
+    for(let key in cardDecks){
+        // console.log(cardDecks[key].damage, cardDecks[key].armor)
+        var sum = cardDecks[key].damage + cardDecks[key].armor; 
+        sumParam.push(sum);
+        // console.log(sum)
+    }
+    return sumParam;
 }
 
 
 
 // console.log(createPlayerCards());
 
-// function createPlayerCards() {
-//     var cards = [
-//         {offence:100, defence: 200},
-//         {offence:101, defence: 201},
-//         {offence:102, defence: 202},
-//         {offence:103, defence: 203},
-//         {offence:104, defence: 204}
-//     ];
-
-//     cards.forEach(card => {
-//         var cardHTML = `
-//                 <div class="card" id="card-1">
-//                     <div class="card-content">
-//                         <b>offence = </b>${card.offence} <br />
-//                         <b>defence = </b>${card.defence}
-//                     </div>
-//                 </div>
-//             `;
-//         document.getElementById('player-cards').innerHTML += cardHTML;
-//     })
-
-// }
 
 function rotateAllPlayerCards() {
     var cards = document.getElementById('player-cards').children;
@@ -195,20 +188,12 @@ function rotateAllPlayerCards() {
 
 
 
-
-
-
-
-
-
-
-
-
 function doMove(oppKey) {
 
     /*    Тут создаем обьект data со всеми нужными полями для игры*/
 
     var data = {};
+    data.fight = fightParam();  
     data.pk     = generateUUID();
     data.oppKey = oppKey;
     data.action = 'startFight';
@@ -217,8 +202,17 @@ function doMove(oppKey) {
 
             /*   Тут принимаем обьект ответа и обрабатываем его. Открываем доступ к полям для управления и тд
                doMove требуется навесить еще на какой то обработчик собития  */
+            var data2 = {};
+            data.fight = fightParam();  
+            data.pk     = generateUUID();
+            data.oppKey = oppKey;
+            jsonPost(url, data2);
 
-
+            if(res.data2.fight>data.fight){
+                alert('В этом раунде ты проиграл');
+            } else if(res.data2.fight<data.fight){
+                alert('Вэтом раунде ты одержал победу');
+            } else{alert('в этом раунде ничья')};
 
         .catch(() => {
                 alert('unknown error')

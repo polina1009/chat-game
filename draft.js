@@ -1,7 +1,10 @@
- var cardDecks = [];
+debugger;
+
+var cardDecks = [];
+var sumParam = [];
 
 function createPlayerCards(){  // рандомайзер делает рандомные существа(объекты) с уроном и защитой от 0 до 50
-    for(i=0; i<5; i++){
+    for(var i=0; i<5; i++){
         var rand = {damage: parseInt(Math.random()*50), armor: parseInt(Math.random()*50)};
         cardDecks.push(rand);
     }
@@ -9,16 +12,27 @@ function createPlayerCards(){  // рандомайзер делает рандо
 }
 console.log(createPlayerCards());
 
-debugger;
+function fightParam(){                           // создаем общий параметр для сражения 
+
+    for( key in cardDecks){
+        // console.log(cardDecks[key].damage, cardDecks[key].armor)
+        var sum = cardDecks[key].damage + cardDecks[key].armor; 
+        sumParam.push(sum);
+        // console.log(sumParam)
+    }
+    return sumParam;
+}
+
+
+
+
 //////////////////////////////////fight//////////////
 
-function fightParam(){
-	for(j=0;j<5;j++){
-    for(let value of cardDecks){
-        console.log(sum)
-        var sum = value.damage + value.armor; 
-    }
-}
+function qwe(){
+	var data ={};
+
+	data.fight = fightParam();
+	console.log(data)
 }
 
-fightParam();
+qwe();
