@@ -3,8 +3,8 @@ var smiles = {
     ':)'  :  'http://www.kolobok.us/smiles/big_standart/biggrin.gif',
     ':*'  :  'http://www.kolobok.us/smiles/he_and_she/kiss2.gif'
 }
-// var url = 'http://localhost:8070';
-var url = 'http://chat.apples.fe.a-level.com.ua:8070';
+var url = 'http://localhost:8070';
+// var url = 'http://chat.apples.fe.a-level.com.ua:8070';
 // var url      = "http://students.a-level.com.ua:10012";
 
 var messages = [];
@@ -33,7 +33,7 @@ function addMessage(message, chatField) {
     var messageItem = document.createElement('li');
     messageItem.classList.add('message');
     messageItem.innerHTML = `>> ${message.nick} :  ${findMedia(message.message)}`;
-    chatField.appendChild(messageItem);
+    chatField.prepend(messageItem);
 }
 
 function sendMessage(ev) {
@@ -127,7 +127,6 @@ document.body.onclick = function(ev) {
 };
 
 
-
 function doRotate(element) {
     element.classList.add('rotate');
     setTimeout(() => {
@@ -153,7 +152,7 @@ function createPlayerCards(){  // рандомайзер делает рандо
         // Тут добавить аттрибуты для карты
 
         var cardHTML = `
-                <div class="card" id="card-1">
+                <div class="card" id="card-1" onclick="clickOneCard(this)">
                     <div class="card-content">
                         <b>damage = </b>${card.damage} <br />
                         <b>armor = </b>${card.armor}
@@ -166,9 +165,30 @@ function createPlayerCards(){  // рандомайзер делает рандо
 }
 
 
+function moveCardToRight(el) {
+    var cards = Array.prototype.slice.call(el.parentElement.children);
+    var index = cards.indexOf(el);
+    var wayLength = cards.length - index - 1;
+
+    var container = el.parentElement;
+    container.removeChild(el);
+    container.appendChild(el);
+    // console.log('click');
+
+    el.style["transition-duration"] = "0s";
+    el.style.transform = `rotateY(180deg) translateX(${el.offsetWidth * wayLength}px)`;
+
+    setTimeout(() => {
+        el.style["transition-duration"] = "1s";
+        el.style.transform = "";
+        el.style.border = '3px solid red';
+    }, 0)
+}
 
 
-
+function clickOneCard(el) {
+    moveCardToRight(el);
+}
 
 function rotateAllPlayerCards() {
     var cards = document.getElementById('player-cards').children;
